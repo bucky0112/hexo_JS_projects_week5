@@ -1,12 +1,8 @@
 import zh from './zh_Tw.js';
-// import navbar from './navbar.js';
-// import products from './products.js';
 import pagination from './pagination.js';
 
-// Vue.component('navbar', navbar);
-Vue.component('pagination', pagination);
-// Vue.component('products', products);
 Vue.use(VueLoading);
+Vue.component('pagination', pagination);
 Vue.component('loading', VueLoading);
 // 註冊全域的表單驗證元件（ValidationProvider）
 Vue.component('ValidationProvider', VeeValidate.ValidationProvider);
@@ -14,17 +10,17 @@ Vue.component('ValidationProvider', VeeValidate.ValidationProvider);
 Vue.component('ValidationObserver', VeeValidate.ValidationObserver);
 // item.price 轉換千分位及加上$符號
 Vue.filter('thousands', (num) => {
-	let parts =num.toString().split('.');
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  return 'NT$ ' + parts.join('.');
+	let parts = num.toString().split('.');
+	parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+	return 'NT$ ' + parts.join('.');
 });
 
 // Class 設定檔案
 VeeValidate.configure({
-  classes: {
-    valid: 'is-valid',
-    invalid: 'is-invalid',
-  },
+	classes: {
+		valid: 'is-valid',
+		invalid: 'is-invalid',
+	},
 });
 VeeValidate.localize('tw', zh);
 
@@ -82,7 +78,6 @@ new Vue({
 				.then((res) => {
 					vm.tempProduct = res.data.data;
 					vm.$set(vm.tempProduct, 'num', 0);
-					// console.log(vm.tempProduct);
 					$('#productModal').modal('show');
 					vm.status.loadingItem = '';
 				});
@@ -102,18 +97,21 @@ new Vue({
 					vm.status.loadingItem = "";
 					$('#productModal').modal('hide');
 					vm.getCart();
-					swal("太棒了！", "已加入購物車", "success");
+					Swal.fire(
+						'Good!',
+						'已加入購物車',
+						'success',
+					);
 				})
 				.catch((err) => {
 					vm.status.loadingItem = "";
 					console.log(err);
 					$('#productModal').modal('hide');
-					swal({
-						title: "Oh...oh",
-						text: `${err.response.data.errors}`,
-						type: "warning",
-						closeOnConfirm: true,
-					});
+					Swal.fire(
+						'Oops...',
+						`${err.response.data.errors}`,
+						'error'
+					);
 				});
 		},
 		getCart() {
@@ -144,7 +142,7 @@ new Vue({
 		updateQuantity(id, num) {
 			const vm = this;
 			const url = `${this.apipath}/api/${this.uuid}/ec/shopping`;
-			if(num <= 0) return;
+			if (num <= 0) return;
 			vm.isLoading = true;
 
 			const data = {
@@ -161,29 +159,40 @@ new Vue({
 		},
 		removeAllCartItem() {
 			const vm = this;
-      vm.isLoading = true;
-      const url = `${this.apipath}/api/${this.uuid}/ec/shopping/all/product`;
-
-			axios
-				.delete(url)
-        .then(() => {
-          vm.isLoading = false;
-					vm.getCart();
-					swal("", "您的商品已刪除。", "success");
-        });
-    },
-    removeCartItem(id) {
-			const vm = this;
-      vm.isLoading = true;
-      const url = `${this.apipath}/api/${this.uuid}/ec/shopping/${id}`;
+			vm.isLoading = true;
+			const url = `${this.apipath}/api/${this.uuid}/ec/shopping/all/product`;
 
 			axios
 				.delete(url)
 				.then(() => {
 					vm.isLoading = false;
 					vm.getCart();
-					swal("", "您的商品已刪除。", "success");
-      });
+					vm.cartTotal = 0;
+					// 不知道什麼原因，vue-loading會跳錯
+					// Swal.fire(
+					// 	'',
+					// 	'您的商品已刪除。',
+					// 	'warning',
+					// );
+				});
+		},
+		removeCartItem(id) {
+			const vm = this;
+			vm.isLoading = true;
+			const url = `${this.apipath}/api/${this.uuid}/ec/shopping/${id}`;
+
+			axios
+				.delete(url)
+				.then(() => {
+					vm.isLoading = false;
+					vm.getCart();
+					// 不知道什麼原因，vue-loading會跳錯
+					// Swal.fire(
+					// 	'',
+					// 	'您的商品已全部刪除。',
+					// 	'warning',
+					// );
+				});
 		},
 		createOrder() {
 			const vm = this;
@@ -192,9 +201,13 @@ new Vue({
 			axios
 				.post(url, vm.form)
 				.then((res) => {
-					if(res.data.data.id) {
+					if (res.data.data.id) {
 						vm.isLoading = false;
-						swal("太棒了！", "您的訂單已完成！", "success");
+						Swal.fire(
+							'Good!',
+							'您的訂單已完成！',
+							'success',
+						);
 						$('#orderModal').modal('hide');
 						vm.getCart();
 						$('#cartModal').modal('hide');
