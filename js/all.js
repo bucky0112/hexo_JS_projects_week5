@@ -1,11 +1,9 @@
 import zh from './zh_Tw.js';
 // import navbar from './navbar.js';
-import listgroup from './listgroup.js';
 // import products from './products.js';
 import pagination from './pagination.js';
 
 // Vue.component('navbar', navbar);
-Vue.component('listgroup', listgroup);
 Vue.component('pagination', pagination);
 // Vue.component('products', products);
 Vue.use(VueLoading);
