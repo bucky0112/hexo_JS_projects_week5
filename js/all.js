@@ -32,7 +32,7 @@ new Vue({
 		isLoading: false,
 		products: [],
 		tempProduct: {
-			num: 0,
+			num: 1,
 		},
 		status: {
 			loadingItem: '',
@@ -90,11 +90,10 @@ new Vue({
 				product: item.id,
 				quantity,
 			};
-
 			axios
 				.post(url, cart)
 				.then(() => {
-					vm.status.loadingItem = "";
+					vm.status.loadingItem = '';
 					$('#productModal').modal('hide');
 					vm.getCart();
 					Swal.fire(
@@ -105,12 +104,12 @@ new Vue({
 				})
 				.catch((err) => {
 					vm.status.loadingItem = "";
-					console.log(err);
+					console.log(err.response.data.errors);
 					$('#productModal').modal('hide');
 					Swal.fire(
 						'Oops...',
 						`${err.response.data.errors}`,
-						'error'
+						'error',
 					);
 				});
 		},
@@ -143,55 +142,52 @@ new Vue({
 			const vm = this;
 			const url = `${this.apipath}/api/${this.uuid}/ec/shopping`;
 			if (num <= 0) return;
-			vm.isLoading = true;
-
 			const data = {
 				product: id,
 				quantity: num,
 			};
-
 			axios
 				.patch(url, data)
 				.then(() => {
-					vm.isLoading = false;
+					$('#cartModal').modal('hide');
 					vm.getCart();
+					Swal.fire(
+						'',
+						'您的商品數量已更新！',
+						'success',
+					);
 				});
 		},
 		removeAllCartItem() {
 			const vm = this;
-			vm.isLoading = true;
 			const url = `${this.apipath}/api/${this.uuid}/ec/shopping/all/product`;
 
 			axios
 				.delete(url)
 				.then(() => {
-					vm.isLoading = false;
+					$('#cartModal').modal('hide');
 					vm.getCart();
 					vm.cartTotal = 0;
-					// 不知道什麼原因，vue-loading會跳錯
-					// Swal.fire(
-					// 	'',
-					// 	'您的商品已刪除。',
-					// 	'warning',
-					// );
+					Swal.fire(
+						'',
+						'您的商品已全部刪除。',
+						'warning',
+					);
 				});
 		},
 		removeCartItem(id) {
 			const vm = this;
-			vm.isLoading = true;
 			const url = `${this.apipath}/api/${this.uuid}/ec/shopping/${id}`;
-
 			axios
 				.delete(url)
 				.then(() => {
-					vm.isLoading = false;
+					$('#cartModal').modal('hide');
 					vm.getCart();
-					// 不知道什麼原因，vue-loading會跳錯
-					// Swal.fire(
-					// 	'',
-					// 	'您的商品已全部刪除。',
-					// 	'warning',
-					// );
+					Swal.fire(
+						'',
+						'您選擇的部份商品已刪除。',
+						'warning',
+					);
 				});
 		},
 		createOrder() {

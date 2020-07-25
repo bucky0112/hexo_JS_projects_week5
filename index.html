@@ -213,7 +213,7 @@
               </blockquote>
               <!-- 這裏 filter 不能用？ -->
               <div class="text-right pr-2">
-                NT$ {{ tempProduct.price}} 元
+                NT$ {{ tempProduct.price }} 元
               </div>
               <select class="form-control mt-3" v-model="tempProduct.num">
                 <option value="0" disabled selected>
@@ -318,11 +318,13 @@
                           class="form-control text-center"
                           :value="item.quantity"
                           @keyup.enter="updateQuantity(item.product.id, $event.target.value)"
+                          disabled
                         />
                         <div class="input-group-append">
                           <button
                             class="btn btn-outline-primary"
                             @click="updateQuantity(item.product.id, item.quantity - 1)"
+                            :disabled="item.quantity === 1"
                           >
                             -
                           </button>
