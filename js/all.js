@@ -193,12 +193,10 @@ new Vue({
 		createOrder() {
 			const vm = this;
 			const url = `${this.apipath}/api/${this.uuid}/ec/orders`;
-			vm.isLoading = true;
 			axios
 				.post(url, vm.form)
 				.then((res) => {
 					if (res.data.data.id) {
-						vm.isLoading = false;
 						Swal.fire(
 							'Good!',
 							'您的訂單已完成！',
