@@ -78,6 +78,7 @@ new Vue({
 				.then((res) => {
 					vm.tempProduct = res.data.data;
 					vm.$set(vm.tempProduct, 'num', 0);
+					// vm.tempProduct.num = 1;
 					$('#productModal').modal('show');
 					vm.status.loadingItem = '';
 				});
